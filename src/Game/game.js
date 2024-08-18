@@ -1,6 +1,7 @@
 export class Game {
     constructor() {
         this.images = this.loadImages();
+        this.flippedCards = document.getElementsByClassName('open');
     }
 
     loadImages() {
@@ -18,22 +19,20 @@ export class Game {
         const template = document.getElementById('flip-card-template').content;
         const totalCards = rows * cols;
 
-        // Set the CSS grid template dynamically
+        // set the CSS grid template dynamically
         board.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
 
-        // Clear the board before generating new cards
+        // clear the board before generating new cards
         board.innerHTML = '';
 
-        // Prepare image pairs
+        // prepare image pairs
         const imagePairs = this.getImagePairs(totalCards / 2);
-        console.log(imagePairs);
         
-        // Shuffle image pairs
+        // shuffle image pairs
         const shuffledImages = this.shuffleArray([...imagePairs, ...imagePairs]);
-        console.log(shuffledImages);
         
         for (let i = 0; i < totalCards; i++) {
-            // Clone the template and append to the board
+            // clone the template and append to the board
             const clone = document.importNode(template, true);
             
             this.fillBoard(clone, shuffledImages[i], board);
@@ -66,30 +65,48 @@ export class Game {
     
     // TODO: card matched
     cardMatched() {
+        if (this.flippedCards.length < 2) return;
 
-    }
-    
-    // TODO: flip the card
-    flipCard(event) {        
-        event.classList.add('open')
+        const allEqual = arr => arr.every(val => val === arr[0]);
 
-        if (this.countFlipped() > 2) this.resetFlipped();
+        let flipped = [];
 
+        Array.from(this.flippedCards).forEach(function(card) {
+            flipped.push(card.dataset.image);
+        });
+
+        if (!allEqual(flipped)) {
+            setTimeout(() => {
+                this.resetFlipped()
+            }, 500);
+
+            return;
+        }
         
+        Array.from(this.flippedCards).forEach(function(card) {
+            card.classList.add('matched');
+        });
+    }
+
+    // TODO: flip the card
+    flipCard(event) {
+        event.classList.add('open');
+
+        // when two cards are flipped, check if they match
+        if (this.countFlipped() === 2) this.cardMatched();
+
+        // reset flipped cards if more than 2 cards are open
+        if (this.countFlipped() > 2) this.resetFlipped();
     }
 
     // TODO: calculate flipped card
     countFlipped() {
-        let flippedCards = document.getElementsByClassName('open');
-
-        return flippedCards.length;
+        return this.flippedCards.length;
     }
     
     // TODO: reset flipped
     resetFlipped() {
-        let flippedCards = document.getElementsByClassName('open');
-    
-        Array.from(flippedCards).forEach(function(card) {
+        Array.from(this.flippedCards).forEach(function(card) {
             card.classList.remove('open');
         });
     }
