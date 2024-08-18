@@ -1,3 +1,5 @@
+import sfx from '../asset/audio/correct-6033.mp3'
+
 export class Game {
     constructor() {
         this.images = this.loadImages();
@@ -65,6 +67,8 @@ export class Game {
     
     // TODO: card matched
     cardMatched() {
+        let audio = new Audio(sfx);
+
         if (this.flippedCards.length < 2) return;
 
         const allEqual = arr => arr.every(val => val === arr[0]);
@@ -86,6 +90,10 @@ export class Game {
         Array.from(this.flippedCards).forEach(function(card) {
             card.classList.add('matched');
         });
+
+        audio.play();
+
+        this.resetFlipped();
     }
 
     // TODO: flip the card
@@ -94,9 +102,6 @@ export class Game {
 
         // when two cards are flipped, check if they match
         if (this.countFlipped() === 2) this.cardMatched();
-
-        // reset flipped cards if more than 2 cards are open
-        if (this.countFlipped() > 2) this.resetFlipped();
     }
 
     // TODO: calculate flipped card

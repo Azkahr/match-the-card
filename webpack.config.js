@@ -16,6 +16,7 @@ const config = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        assetModuleFilename: 'assets/[hash][ext][query]',
         clean: true, // This option cleans the output directory before each build
     },
     devServer: {
@@ -41,7 +42,7 @@ const config = {
                 use: [stylesHandler,'css-loader'],
             },
             {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|svg|jpg|jpeg|gif|mp3|wav)$/i,
                 type: 'asset/resource',
             },
 
