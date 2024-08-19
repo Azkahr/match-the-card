@@ -2,27 +2,36 @@ import sfx from '../asset/audio/correct-6033.mp3'
 
 export class Game {
     constructor() {
+        this.rows = 4;
+        this.cols = 4;
         this.images = this.loadImages();
         this.flippedCards = document.getElementsByClassName('open');
+        this.matchedCards = document.getElementsByClassName('matched');
     }
 
     loadImages() {
+        // eslint-disable-next-line no-undef
         const imageContext = require.context('../asset/icons', false, /\.(png|jpe?g|svg)$/);
         return imageContext.keys().map(imageContext);
     }
     
     init() {
-        this.initBoard(4, 4)
+        this.initBoard()
+    }
+
+    // TODO: finish game
+    finish() {
+        console.log('finish');
     }
 
     // TODO: generate the board
-    initBoard(rows, cols) {
+    initBoard() {
         const board = document.querySelector('.board');
         const template = document.getElementById('flip-card-template').content;
-        const totalCards = rows * cols;
+        const totalCards = this.rows * this.cols;
 
         // set the CSS grid template dynamically
-        board.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+        board.style.gridTemplateColumns = `repeat(${this.cols}, 100px)`;
 
         // clear the board before generating new cards
         board.innerHTML = '';
@@ -94,6 +103,8 @@ export class Game {
         audio.play();
 
         this.resetFlipped();
+
+        if(this.isWin()) this.finish();
     }
 
     // TODO: flip the card
@@ -104,6 +115,11 @@ export class Game {
         if (this.countFlipped() === 2) this.cardMatched();
     }
 
+    // TODO: count matched card
+    isWin() {
+        return this.matchedCards.length == this.rows * this.cols;
+    }
+    
     // TODO: calculate flipped card
     countFlipped() {
         return this.flippedCards.length;
